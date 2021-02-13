@@ -9,8 +9,8 @@ namespace airfare
     static class Globals
     {
         // global int
-        public static int flight_counter = 0 ;
-        public static int food_counter = 0 ;
+        public static string flight_counter = "0";
+        public static string food_counter = "0";
 
         // global function
         public static string HelloWorld()
@@ -149,7 +149,7 @@ namespace airfare
         //admin wants to add a flight
         static void add_flight()
         {
-            var flight_info = new Dictionary<int, string>();
+            var flight_info = new Dictionary<string, string>();
 
             string filename = @"D:\my C#\airfare\Airfare\Airfare\Admin\flights.txt";
 
@@ -172,7 +172,7 @@ namespace airfare
             Console.WriteLine("\tEnter the destination of flight : ");
             string flight_destination = Console.ReadLine();
 
-            Globals.flight_counter++;
+            //Globals.flight_counter++;
 
             flight_info.Add(Globals.flight_counter, flight_name + " " + flight_date + " " + flight_time + " " + flight_begining + " " + flight_destination);
 
@@ -185,7 +185,7 @@ namespace airfare
         //admin wants to add a food
         static void add_food()
         {
-            var food_info = new Dictionary<int, string>();
+            var food_info = new Dictionary<string, string>();
             string filename = @"D:\my C#\airfare\Airfare\Airfare\Admin\foods.txt";
 
             if (!File.Exists(filename))
@@ -199,7 +199,7 @@ namespace airfare
             Console.WriteLine("\tEnter the name of food you want to add : ");
             string food_name = Console.ReadLine();
 
-            Globals.food_counter++;
+            //Globals.food_counter++;
 
             food_info.Add(Globals.food_counter, food_name);
 
@@ -258,13 +258,14 @@ namespace airfare
 
         static void edit_flight()
         {
-            string path = @"D:\my C#\airfare\Airfare\Airfare\Admin\flights.txt";
+            string filename = @"D:\my C#\airfare\Airfare\Airfare\Admin\flights.txt";
+
             Console.Clear();
             Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
-            show_file(path);
-            Console.WriteLine("/tPlease enter the name of flight that you want to edit : ");
+            show_file(filename);
+            Console.WriteLine("\tPlease enter the name of flight that you want to edit : ");
             string search_flight_name = Console.ReadLine();
-
+            search(filename, search_flight_name);
 
 
 
@@ -293,7 +294,7 @@ namespace airfare
         }
 
         //write anything to file
-        static void write_file( string filename, Dictionary<int,string> flight_info)
+        static void write_file( string filename, Dictionary<string ,string> flight_info)
         {
             
             // Open the stream and write to it.
@@ -321,11 +322,11 @@ namespace airfare
         }
 
         //show whole of file
-        static void show_file(string path)
+        static void show_file(string filename)
         {
             // Read each line of the file into a string array. Each element
             // of the array is one line of the file.
-            string[] lines = System.IO.File.ReadAllLines(path);
+            string[] lines = System.IO.File.ReadAllLines(filename);
 
             // Display the file contents by using a foreach loop.
             System.Console.WriteLine("\tList of flights = ");
@@ -342,9 +343,41 @@ namespace airfare
             System.Console.ReadKey();
         }
 
-        static void search( string Path , string search_name)
+        static void search( string filename , string search_name)
         {
-             
+            var new_flights = new Dictionary<string, string>();
+
+            string[] lines = System.IO.File.ReadAllLines(filename);
+
+
+            for (int i=0 ; i < lines.Length; i++)
+            {
+                if(lines[i].Contains(search_name))
+                {
+                    Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
+                    Console.WriteLine("\tEnter the name of airline you want to add : ");
+                    string flight_name = Console.ReadLine();
+                    Console.WriteLine("\tEnter the date of flight : (like yyyy/mm/dd )");
+                    string flight_date = Console.ReadLine();
+                    Console.WriteLine("\tEnter the time of flight : ");
+                    string flight_time = Console.ReadLine();
+                    Console.WriteLine("\tEnter the beginning of flight : ");
+                    string flight_begining = Console.ReadLine();
+                    Console.WriteLine("\tEnter the destination of flight : ");
+                    string flight_destination = Console.ReadLine();
+
+                    lines[i] = ("0 " + flight_name + " " + flight_date + " " + flight_time + " " + flight_begining + " " + flight_destination);
+
+                    Console.WriteLine("\n\tDONE!!!\n\tplease press a key to continiue.");
+                    Console.ReadLine();
+                }
+
+                string[] lmnts = lines[i].Split(' ','\t');
+                foreach (var lmnt in lmnts) Console.WriteLine(lmnt);
+                new_flights.Add(lmnts[0], lmnts[1] + " " + lmnts[2] + " " + lmnts[3] + " " + lmnts[4] + " " + lmnts[5]);
+            }
+
+            write_file(filename , new_flights);
         }
 
         static void user()
