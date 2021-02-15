@@ -236,7 +236,7 @@ namespace airfare
                         edit_flight();
                         break;
                     case 2:
-                        //add_food();
+                        edit_food();
                         break;
                     case 3:
                         Console.WriteLine("Add Ticket");
@@ -253,22 +253,6 @@ namespace airfare
                         break;
                 }
             }
-        }
-
-
-        static void edit_flight()
-        {
-            string filename = @"D:\my C#\airfare\Airfare\Airfare\Admin\flights.txt";
-
-            Console.Clear();
-            Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
-            show_file(filename);
-            Console.WriteLine("\tPlease enter the name of flight that you want to edit : ");
-            string search_flight_name = Console.ReadLine();
-            search(filename, search_flight_name);
-
-
-
         }
 
         //create a file that didnt exist
@@ -296,7 +280,9 @@ namespace airfare
         //write anything to file
         static void write_file( string filename, Dictionary<string ,string> flight_info)
         {
-            
+            //FIX : keys of dictionary.
+
+
             // Open the stream and write to it.
             if ( Path.GetFileName(filename) == "flights.txt")
             {
@@ -339,12 +325,20 @@ namespace airfare
             }
 
             // Keep the console window open in debug mode.
-            Console.WriteLine("Press any key to continue.");
-            System.Console.ReadKey();
+            //Console.WriteLine("Press any key to continue.");
+            //System.Console.ReadKey();
         }
 
-        static void search( string filename , string search_name)
+        static void edit_flight()
         {
+            string filename = @"D:\my C#\airfare\Airfare\Airfare\Admin\flights.txt";
+
+            Console.Clear();
+            Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
+            show_file(filename);
+            Console.WriteLine("\tPlease enter the name of flight that you want to edit : ");
+            string search_name = Console.ReadLine();
+
             var new_flights = new Dictionary<string, string>();
 
             string[] lines = System.IO.File.ReadAllLines(filename);
@@ -366,23 +360,120 @@ namespace airfare
                     Console.WriteLine("\tEnter the destination of flight : ");
                     string flight_destination = Console.ReadLine();
 
-                    lines[i] = ("0 " + flight_name + " " + flight_date + " " + flight_time + " " + flight_begining + " " + flight_destination);
+                    lines[i] = (i + " " + flight_name + " " + flight_date + " " + flight_time + " " + flight_begining + " " + flight_destination);
 
-                    Console.WriteLine("\n\tDONE!!!\n\tplease press a key to continiue.");
-                    Console.ReadLine();
+                    
                 }
 
-                string[] lmnts = lines[i].Split(' ','\t');
-                foreach (var lmnt in lmnts) Console.WriteLine(lmnt);
+                string[] lmnts = lines[i].Split(' ', '\t');
                 new_flights.Add(lmnts[0], lmnts[1] + " " + lmnts[2] + " " + lmnts[3] + " " + lmnts[4] + " " + lmnts[5]);
+
+                
             }
 
-            write_file(filename , new_flights);
+            //foreach (var flight in new_flights)
+            //{
+            //    Console.WriteLine($"key={flight.Key} , value = {flight.Value}");
+            //} 
+
+            replace(filename , new_flights);
         }
+
+        static void edit_food()
+        {
+            string filename = @"D:\my C#\airfare\Airfare\Airfare\Admin\foods.txt";
+
+            Console.Clear();
+            Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
+            show_file(filename);
+            Console.WriteLine("\tPlease enter the name of food that you want to edit : ");
+            string search_name = Console.ReadLine();
+
+            var new_flights = new Dictionary<string, string>();
+
+            string[] lines = System.IO.File.ReadAllLines(filename);
+
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].Contains(search_name))
+                {
+                    Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
+                    Console.WriteLine("\tEnter the name of food you want to add : ");
+                    string food_name = Console.ReadLine();
+
+                    lines[i] = (i + " " + food_name);
+                }
+
+                string[] lmnts = lines[i].Split(' ', '\t');
+                new_flights.Add(lmnts[0], lmnts[1]);
+
+
+            }
+
+            //foreach (var flight in new_flights)
+            //{
+            //    Console.WriteLine($"key={flight.Key} , value = {flight.Value}");
+            //} 
+
+            replace(filename, new_flights);
+        }
+    
+
+        static void replace(string filename, Dictionary<string, string>file_info)
+        {
+            File.Delete(filename);
+            using (StreamWriter sw = File.CreateText(filename))
+            {
+                foreach(var info in file_info)
+                {
+                    sw.WriteLine("{0} {1}", info.Key, info.Value);
+                }   
+            }
+            Console.WriteLine("DONE!!!! press any key to continue...");
+            Console.ReadLine();
+        }
+
 
         static void user()
         {
+            bool on = true;
+            while (on)
+            {
+                on = false;
+                Console.Clear();
+                Console.WriteLine("_____________________________________________ ADMIN _____________________________________________");
+                Console.WriteLine("\t 1 - Select Flight");
+                Console.WriteLine("\t 2 - Remove Flight");
+                Console.WriteLine("\t 3 - Select Food");
+                Console.WriteLine("\t 4 - Remove Food");
+                Console.WriteLine("\t 5 - View Ticket");
+                Console.WriteLine("\t 6 - Back");
+                Console.WriteLine("\n\tEnter the number : ");
+                int admin_des = Convert.ToInt32(Console.ReadLine());
 
+                switch (admin_des)
+                {
+                    case 1:
+                        //add_admin();
+                        break;
+                    case 2:
+                        //edit_admin();
+                        break;
+                    case 3:
+                        Console.WriteLine("Remove");
+                        break;
+                    case 4:
+                        //back
+                        return;
+                        break;
+                    default:
+                        Console.WriteLine("\tWrong! please press a key to try again.");
+                        Console.ReadLine();
+                        on = true;
+                        break;
+                }
+            }
         }
 
     }
